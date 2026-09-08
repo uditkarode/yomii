@@ -28,7 +28,7 @@ Language Support
 
 ## Notes for reviewers
 
-- The extension makes no network requests. Everything ships in the package: system_small.dic (123 MB) is the SudachiDict tokenizer dictionary, and jmdict.json, kanji.json and jlpt.json are generated from JMdict, KANJIDIC2 and the tanos JLPT lists by `npm run data` (see README.md in the source package). The generated files are included in the source package, so the build does not download anything.
+- The extension makes no network requests. Everything ships in the package: sudachi-dict.0 and sudachi-dict.1 (123 MB together) are the SudachiDict tokenizer dictionary system_small.dic split in two because of the 100 MiB per-file limit, and jmdict*.json, kanji.json and jlpt.json are generated from JMdict, KANJIDIC2 and the tanos JLPT lists by `npm run data` (see README.md in the source package). The generated files are included in the source package, so the build does not download anything.
 - Build: `npm ci` then `npm run build:firefox`. The output directory `.output/firefox-mv3` matches the uploaded zip. Built with Node.js v22.22.2 and npm 10.9.7 on macOS 26.6 (arm64).
 - `wasm-unsafe-eval` in the content security policy is required to run the Sudachi tokenizer, which is WebAssembly bundled into background.js.
 - Data collection: none, declared in the manifest (`data_collection_permissions`).

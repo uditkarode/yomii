@@ -25,8 +25,8 @@ The uploaded build was made on macOS 26.6 (arm64) with Node.js v22.22.2 and npm 
 
 | File | Script | Source |
 |---|---|---|
-| `system_small.dic` | `scripts/fetch-sudachi-dict.mjs` | SudachiDict small 20260723 |
-| `jmdict.json` | `scripts/build-jmdict.mjs` | jmdict-simplified 3.6.2+20260907165411 (JMdict) |
+| `sudachi-dict.json`, `sudachi-dict.0`, `sudachi-dict.1` | `scripts/fetch-sudachi-dict.mjs` | SudachiDict small 20260723 (`system_small.dic`, split into parts under AMO's 100 MiB per-file limit) |
+| `jmdict.json`, `jmdict.0.json` … | `scripts/build-jmdict.mjs` | jmdict-simplified 3.6.2+20260907165411 (JMdict); entries split into files under 4 MiB because AMO does not validate JSON files of 5 MiB or more |
 | `jlpt.json` | `scripts/build-jlpt.mjs` | tanos.co.uk JLPT vocabulary lists |
 | `kanji.json` | `scripts/build-kanji.mjs` | jmdict-simplified (KANJIDIC2), Wikipedia "List of jōyō kanji" revision 1351700992, JmdictFurigana 2.3.1+2026-08-25, JMdict XML frequency tags |
 

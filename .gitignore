@@ -5,7 +5,7 @@ stats.html
 stats-*.json
 web-ext.config.ts
 .cache
-public/system_small.dic
-public/jmdict.json
+public/sudachi-dict.*
+public/jmdict*.json
 public/kanji.json
 public/jlpt.json

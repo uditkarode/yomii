@@ -1,5 +1,6 @@
 import { SudachiStateless, TokenizeMode } from 'sudachi-wasm333';
-import type { JlptFile, JmdictEntry, JmdictFile, KanjiFile, KanjiReadingRecord } from '@/utils/jmdict';
+import type { PublicPath } from 'wxt/browser';
+import type { JlptFile, JmdictEntry, JmdictFile, KanjiFile, KanjiReadingRecord, SudachiDictManifest } from '@/utils/jmdict';
 import { katakanaToHiragana } from '@/utils/kana';
 import type { KanjiInfo, KanjiReading, LookupEntry, LookupQuery, LookupResult, Message, Span, TokenizeResponse } from '@/utils/messages';
 import { jmdictPosMatches, posGroup } from '@/utils/pos';
@@ -11,13 +12,27 @@ export default defineBackground({
 
     function getTokenizer(): Promise<SudachiStateless> {
       tokenizerPromise ??= (async () => {
-        const response = await fetch(browser.runtime.getURL('/system_small.dic'));
-        const bytes = new Uint8Array(await response.arrayBuffer());
         const tokenizer = new SudachiStateless();
-        tokenizer.initialize_from_bytes(bytes);
+        tokenizer.initialize_from_bytes(await loadDictionaryBytes());
         return tokenizer;
       })();
       return tokenizerPromise;
+    }
+
+    // The dictionary ships in parts (see scripts/fetch-sudachi-dict.mjs); join them into one buffer for Sudachi.
+    async function loadDictionaryBytes(): Promise<Uint8Array> {
+      const manifest: SudachiDictManifest = await (await fetch(browser.runtime.getURL('/sudachi-dict.json'))).json();
+      const parts = await Promise.all(
+        manifest.parts.map(async (name) => new Uint8Array(await (await fetch(browser.runtime.getURL(`/${name}` as PublicPath))).arrayBuffer())),
+      );
+      const bytes = new Uint8Array(manifest.size);
+      let offset = 0;
+      for (const part of parts) {
+        bytes.set(part, offset);
+        offset += part.length;
+      }
+      if (offset !== manifest.size) throw new Error(`sudachi dictionary: got ${offset} bytes, expected ${manifest.size}`);
+      return bytes;
     }
 
     function tokenize(tokenizer: SudachiStateless, text: string): Span[] {
@@ -46,11 +61,18 @@ export default defineBackground({
 
     function getDictionary(): Promise<Dictionary> {
       dictionaryPromise ??= Promise.all([
-        fetch(browser.runtime.getURL('/jmdict.json')).then((response) => response.json() as Promise<JmdictFile>),
-        fetch(browser.runtime.getURL('/kanji.json')).then((response) => response.json() as Promise<KanjiFile>),
-        fetch(browser.runtime.getURL('/jlpt.json')).then((response) => response.json() as Promise<JlptFile>),
-      ]).then(([jmdict, kanji, jlpt]) => new Dictionary(jmdict, kanji, jlpt));
+        fetchJson<JmdictFile>('/jmdict.json').then(async (jmdict) => {
+          const parts = await Promise.all(jmdict.parts.map((name) => fetchJson<JmdictEntry[]>(`/${name}` as PublicPath)));
+          return [jmdict, parts.flat()] as const;
+        }),
+        fetchJson<KanjiFile>('/kanji.json'),
+        fetchJson<JlptFile>('/jlpt.json'),
+      ]).then(([[jmdict, entries], kanji, jlpt]) => new Dictionary(jmdict, entries, kanji, jlpt));
       return dictionaryPromise;
+    }
+
+    async function fetchJson<T>(path: PublicPath): Promise<T> {
+      return (await fetch(browser.runtime.getURL(path))).json();
     }
 
     browser.runtime.onMessage.addListener((message: Message, _sender, sendResponse) => {
@@ -141,10 +163,11 @@ class Dictionary {
 
   constructor(
     private readonly file: JmdictFile,
+    entries: JmdictEntry[],
     private readonly kanji: KanjiFile,
     private readonly jlpt: JlptFile,
   ) {
-    for (const entry of file.entries) {
+    for (const entry of entries) {
       for (const form of [...entry[0], ...entry[1]]) {
         const list = this.index.get(form);
         if (list) list.push(entry);
