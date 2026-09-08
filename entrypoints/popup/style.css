@@ -73,3 +73,10 @@ button:disabled {
   opacity: 0.5;
   cursor: default;
 }
+
+.credits {
+  align-self: center;
+  font-size: 12px;
+  color: inherit;
+  opacity: 0.6;
+}

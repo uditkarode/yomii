@@ -1,0 +1,45 @@
+Yomii - third-party data and software notices
+
+Yomii bundles the data and software listed below. Copies of the Apache License 2.0
+and the EDRDG licence statement are in the licenses/ directory next to this file.
+
+JMdict and KANJIDIC2
+  This package uses the JMdict and KANJIDIC dictionary files. These files are the
+  property of the Electronic Dictionary Research and Development Group (EDRDG), and
+  are used in conformance with the Group's licence.
+  https://www.edrdg.org/jmdict/j_jmdict.html
+  https://www.edrdg.org/wiki/index.php/KANJIDIC_Project
+  Licence: https://www.edrdg.org/edrdg/licence.html (licenses/EDRDG-licence.txt),
+  Creative Commons Attribution-ShareAlike 4.0, https://creativecommons.org/licenses/by-sa/4.0/
+  Loaded as JSON from jmdict-simplified 3.6.2 (scriptin), CC BY-SA 4.0:
+  https://github.com/scriptin/jmdict-simplified
+  Word frequency tags are read from the JMdict XML file:
+  http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz
+
+JmdictFurigana 2.3.1 (Doublevil)
+  Kanji-to-reading alignment for JMdict words, used to pick example words for kanji
+  readings. Distributed under the same licence as JMdict (CC BY-SA).
+  https://github.com/Doublevil/JmdictFurigana
+
+SudachiDict small, 2026-07-23 (Works Applications Co., Ltd.)
+  Copyright (c) 2017-2023 Works Applications Co., Ltd.
+  Licensed under the Apache License, Version 2.0 (licenses/Apache-2.0.txt).
+  https://github.com/WorksApplications/SudachiDict
+  Includes UniDic (https://unidic.ninjal.ac.jp/) and a part of NEologd
+  (https://github.com/neologd/mecab-ipadic-neologd).
+
+sudachi-wasm333 1.0.4 (Benjas333)
+  WebAssembly build of sudachi.rs (Works Applications Co., Ltd.).
+  Licensed under the Apache License, Version 2.0 (licenses/Apache-2.0.txt).
+  https://github.com/Benjas333/sudachi-wasm333
+  https://github.com/WorksApplications/sudachi.rs
+
+JLPT vocabulary lists (Jonathan Waller, tanos.co.uk)
+  Creative Commons Attribution (CC BY): https://www.tanos.co.uk/jlpt/sharing/
+  https://www.tanos.co.uk/jlpt/
+  JSON copies from https://github.com/wkei/jlpt-vocab-api
+
+Joyo kanji readings
+  From Wikipedia, "List of joyo kanji", revision 1351700992, CC BY-SA 4.0:
+  https://en.wikipedia.org/w/index.php?title=List_of_j%C5%8Dy%C5%8D_kanji&oldid=1351700992
+  The readings transcribe the 常用漢字表 (Cabinet Notice No. 2 of 2010).
