@@ -1,0 +1,25 @@
+{
+  "name": "yomii",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "data": "node scripts/fetch-sudachi-dict.mjs && node scripts/build-jmdict.mjs && node scripts/build-jlpt.mjs && node scripts/build-kanji.mjs"
+  },
+  "dependencies": {
+    "sudachi-wasm333": "1.0.4"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "web-ext": "^10.6.0",
+    "wxt": "0.21.4"
+  }
+}

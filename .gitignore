@@ -1,0 +1,11 @@
+node_modules
+.output
+.wxt
+stats.html
+stats-*.json
+web-ext.config.ts
+.cache
+public/system_small.dic
+public/jmdict.json
+public/kanji.json
+public/jlpt.json
