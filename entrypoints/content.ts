@@ -54,20 +54,33 @@ export default defineContentScript({
   async main() {
     const style = document.createElement('style');
     style.textContent = STYLES;
-    document.documentElement.appendChild(style);
-
     const highlighter = new Highlighter();
+    const card = new HoverCard();
+
+    // Nothing is added to the page while highlighting is off, so a page that hydrates later still sees the DOM it served.
+    // The style and card go at the end of <head> and <body>: React 18 hydration tolerates extra trailing nodes there,
+    // but fails on extra children of <html>.
+    const setEnabled = (enabled: boolean) => {
+      if (enabled) {
+        document.head.append(style);
+        card.mount();
+        highlighter.enable();
+      } else {
+        highlighter.disable();
+        card.unmount();
+        style.remove();
+      }
+    };
     browser.runtime.onMessage.addListener((message: Message, _sender, sendResponse) => {
       if (message.type === 'get-state') {
         sendResponse({ enabled: highlighter.enabled } satisfies PageState);
       } else if (message.type === 'set-enabled') {
-        message.enabled ? highlighter.enable() : highlighter.disable();
+        setEnabled(message.enabled);
         sendResponse({ enabled: highlighter.enabled } satisfies PageState);
       }
     });
-    autoHighlight.watch((enabled) => (enabled ? highlighter.enable() : highlighter.disable()));
+    autoHighlight.watch(setEnabled);
 
-    const card = new HoverCard();
     let showTimer: ReturnType<typeof setTimeout> | undefined;
     let hideTimer: ReturnType<typeof setTimeout> | undefined;
     document.addEventListener('mouseover', (event) => {
@@ -83,7 +96,7 @@ export default defineContentScript({
     document.addEventListener('scroll', () => card.hide(), true);
     window.addEventListener('blur', () => card.hide());
 
-    if (await autoHighlight.getValue()) highlighter.enable();
+    if (await autoHighlight.getValue()) setEnabled(true);
   },
 });
 
@@ -276,7 +289,15 @@ class HoverCard {
     this.card.className = 'card';
     root.append(style, this.card);
     this.host.hidden = true;
-    document.documentElement.appendChild(this.host);
+  }
+
+  mount() {
+    document.body.append(this.host);
+  }
+
+  unmount() {
+    this.hide();
+    this.host.remove();
   }
 
   contains(element: Element): boolean {
