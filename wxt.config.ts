@@ -5,7 +5,23 @@ export default defineConfig({
   manifest: {
     name: 'Yomii',
     description: 'Highlights parts of speech on Japanese pages so you can skim faster.',
-    action: { default_title: 'Yomii' },
+    icons: {
+      16: 'icon/16.png',
+      32: 'icon/32.png',
+      48: 'icon/48.png',
+      64: 'icon/64.png',
+      96: 'icon/96.png',
+      128: 'icon/128.png',
+      256: 'icon/256.png',
+    },
+    action: {
+      default_title: 'Yomii',
+      default_icon: {
+        16: 'icon/16.png',
+        32: 'icon/32.png',
+        48: 'icon/48.png',
+      },
+    },
     permissions: ['storage'],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
